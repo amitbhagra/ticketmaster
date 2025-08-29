@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: events-list-service
+logging:
+  level:
+    root: INFO
+    org.springframework.data.elasticsearch.core: DEBUG
+    org.elasticsearch.client: DEBUG
+server:
+  port: 8097
+kafka:
+  bootstrap:
+    servers: localhost:9093, localhost:9092

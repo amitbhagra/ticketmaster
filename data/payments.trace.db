@@ -1,0 +1,8 @@
+2025-08-29 00:39:29 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE from PAYMENT\000d\000a[*]select * from PAYMENT"; SQL statement:
+DELETE from PAYMENT
+select * from PAYMENT [42000-220]
+2025-08-29 00:39:46 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE from PAYMENT\000d\000a[*]select * from PAYMENT"; SQL statement:
+DELETE from PAYMENT
+select * from PAYMENT [42000-220]

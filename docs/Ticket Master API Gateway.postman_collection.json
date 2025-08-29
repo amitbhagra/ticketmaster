@@ -1,0 +1,376 @@
+{
+	"info": {
+		"_postman_id": "464194f4-69a6-4226-a08d-7b530b4c14af",
+		"name": "Ticket Master API Gateway",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Save Event",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Musical Evening\",\r\n    \"venue\": \"Talkatora Stadium\",\r\n    \"date\": \"21-Aug-2025\",\r\n    \"time\": \"05:00 PM\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/events",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Event",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"name\": \"A comic evening\",\r\n        \"venue\": \"Talkatora Stadium\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/events/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"events",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Event",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/v1/events/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"events",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Events",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/events",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Event By Id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/events/2",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"events",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Events Sorted By Distance",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"lat\": 22.5744,\r\n  \"lon\": 88.3629\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/eventslist/distance",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"eventslist",
+						"distance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Booking By Id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/bookings/503",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"bookings",
+						"503"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Bookings of User",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/bookings/user/7",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"bookings",
+						"user",
+						"7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new Booking",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"eventId\": 3,\r\n  \"userId\": 7,\r\n  \"numberOfTickets\": 2,\r\n  \"amount\": 2500\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/bookings",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Payment Info",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/payments/initiate/503",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"payments",
+						"initiate",
+						"503"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify Payment",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": 352,\r\n  \"otp\": \"346388\",\r\n  \"paymentMethod\" : \"CREDIT_CARD\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v1/payments/validate",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"payments",
+						"validate"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyYmVsaU91ejJBSkMzVUtPczhNYzNFUVZzSGNCNzRvbVpmZzVtTFd5NDhrIn0.eyJleHAiOjE3NTUyODA0MzgsImlhdCI6MTc1NTI3ODYzOCwianRpIjoib25ydHJvOjZhMDMzY2FiLTliNWEtMWI3NC01NTQ3LWQwYmE2ZGIxNDg3NyIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvdGlja2V0bWFzdGVyIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjU5ODViNmI1LTc4ZTgtNDQ3ZC1hMGU1LTllZTcxZjc5ZWQ4OCIsInR5cCI6IkJlYXJlciIsImF6cCI6InNwcmluZy1ib290LWNsaWVudCIsInNpZCI6Ijk5NDcyZjk0LWNkODYtNDlhNi04Y2I4LWJkM2Q0YjMxNmVmMCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDo4MDgxIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImFkbWluIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLXRpY2tldG1hc3RlciJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiQW1pdCBCaGFncmEiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhbWl0LmJoYWdyYSIsImdpdmVuX25hbWUiOiJBbWl0IiwiZmFtaWx5X25hbWUiOiJCaGFncmEiLCJlbWFpbCI6ImFtaXQuYmhhZ3JhQGdtYWlsLmNvbSJ9.KDt7bkd28f2TOUgxw6Un5DTpGjEPkEguS5MGZ50qTptl5hEdzvopX2xhVOtJgw64_rTb9Kno5hKP0_MW5vFGovFofWXBB_WbR4T_NlM9AxSnIYWEypmXJewgV-CTlGqp3YaQJsTQWwc5XMMVisue1GTq8IYbxpKfaqP2LiRxIrgotYFEC_4qRxDyqVxjHIDrmp6liTeIwdFdUBcTG0HiU3jc82AD3Y13Pmz7Y9M1XNpnp3nFqdwD6ZK3yfFVSXI2VlCDwZSLqsm9v9dNsBakPScz1LmtnhSaGEiA1myzz0sUCM2z-SH0xCIDFw-Az2QmFkWMByz-bCT8OzaKKPeC7w",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: event-service
+  datasource:
+    url: jdbc:postgresql://prod-db-server:5432/eventsdb
+    driverClassName: org.postgresql.Driver
+    username: prod_user
+    password: prod_password
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+  h2:
+    console:
+      enabled: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://auth.prod-domain.com/realms/ticketmaster
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+

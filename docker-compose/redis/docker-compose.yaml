@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:latest # Or a specific version like redis:6.0.7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data # For persistent data storage
+    restart: always
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight
+    ports:
+    - 5540:5540
+    volumes:
+    - redisinsight:/data
+    depends_on:
+    - redis
+    restart: always
+
+volumes:
+  redis_data:
+    driver: local
+  redisinsight:
+    driver: local

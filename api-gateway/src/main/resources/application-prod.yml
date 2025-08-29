@@ -1,0 +1,18 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: api-gateway
+  profiles: prod
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: event-service
+              uri: http://event-service:8080 # Use service discovery or prod URL
+              predicates:
+                - Path=/events/**
+logging:
+  level:
+    root: INFO

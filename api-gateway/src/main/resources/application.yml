@@ -1,0 +1,38 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: api-gateway
+  security:
+    enabled: false
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8082/realms/ticketmaster
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: event-service
+              uri: http://localhost:8092
+              predicates:
+                - Path=/api/v1/events/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 20
+                    key-resolver: "#{@userKeyResolver}"
+            - id: event-list-service
+              uri: http://localhost:8097
+              predicates:
+                - Path=/api/v1/eventslist/**
+            - id: booking-service
+              uri: http://localhost:8094
+              predicates:
+                - Path=/api/v1/bookings/**
+            - id: payment-service
+              uri: http://localhost:8096
+              predicates:
+                - Path=/api/v1/payments/**
