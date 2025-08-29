@@ -56,7 +56,7 @@ ticketmaster/
 ### Clone the Repository
 
 ```bash
-git clone [https://github.com/your-org/ticketmaster.git](https://github.com/amitbhagra/ticketmaster.git)
+git clone https://github.com/amitbhagra/ticketmaster.git
 cd ticketmaster
 ```
 
