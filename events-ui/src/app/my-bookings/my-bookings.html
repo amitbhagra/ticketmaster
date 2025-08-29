@@ -1,0 +1,108 @@
+<div class="flex justify-end items-center gap-2 mb-4" style="margin-right: 1.5rem; margin-top: 1rem;">
+  <i class="pi pi-user" style="font-size: 1.5rem;"></i>
+  <span class="font-semibold text-lg">{{ getUsername() }}</span>
+</div>
+<p-card header="My Bookings">
+    <div style="max-height: 400px; overflow-y: auto;">
+        <ng-container *ngIf="!loading; else loadingTpl">
+            <p-table [value]="bookings" style="width: 100%;">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Amount</th>
+                        <th>Number of Tickets</th>
+                        <th>Booking Status</th>
+                        <th>Booking Date/Time</th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-booking>
+                    <tr (click)="onRowClick(booking)" style="cursor:pointer">
+                        <td>{{ booking.amount }}</td>
+                        <td>{{ booking.numberOfTickets }}</td>
+                        <td>{{ booking.bookingStatus }}</td>
+                        <td>{{ booking.bookingDateAndTime }}</td>
+                        <td></td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </ng-container>
+        <ng-template #loadingTpl>
+            <div style="text-align:center; padding:2rem;">
+                <p>Loading bookings...</p>
+            </div>
+        </ng-template>
+    </div>
+    <p-dialog header="Booking Details" [(visible)]="showDialog" [modal]="true" [closable]="true" (onHide)="closeDialog()" class="modern-dialog">
+        <div *ngIf="selectedBooking" class="dialog-content">
+            <section class="dialog-section">
+                <h3 class="dialog-title">Booking Details</h3>
+                <div class="dialog-row"><span>Amount:</span> <strong>{{ selectedBooking.bookingInfo?.amount }}</strong></div>
+                <div class="dialog-row"><span>Number of Tickets:</span> <strong>{{ selectedBooking.bookingInfo?.numberOfTickets }}</strong></div>
+                <div class="dialog-row"><span>Status:</span> <strong>{{ selectedBooking.bookingInfo?.bookingStatus }}</strong></div>
+                <div class="dialog-row"><span>Date/Time:</span> <strong>{{ selectedBooking.bookingInfo?.bookingDateAndTime }}</strong></div>
+            </section>
+            <section class="dialog-section">
+                <h3 class="dialog-title">Payment Details</h3>
+                <div class="dialog-row"><span>Booking ID:</span> <strong>{{ selectedBooking.paymentInfo?.bookingId }}</strong></div>
+                <div class="dialog-row"><span>Amount:</span> <strong>{{ selectedBooking.paymentInfo?.amount }}</strong></div>
+                <div class="dialog-row"><span>Status:</span> <strong>{{ selectedBooking.paymentInfo?.status }}</strong></div>
+                <div class="dialog-row"><span>Payment Method:</span> <strong>{{ selectedBooking.paymentInfo?.paymentMethod }}</strong></div>
+            </section>
+            <section class="dialog-section">
+                <h3 class="dialog-title">Event Info</h3>
+                <div class="dialog-row"><span>Name:</span> <strong>{{ selectedBooking.eventInfo?.name }}</strong></div>
+                <div class="dialog-row"><span>Venue:</span> <strong>{{ selectedBooking.eventInfo?.venue }}</strong></div>
+                <div class="dialog-row"><span>Date:</span> <strong>{{ selectedBooking.eventInfo?.date }}</strong></div>
+                <div class="dialog-row"><span>Time:</span> <strong>{{ selectedBooking.eventInfo?.time }}</strong></div>
+                <div class="dialog-row" *ngIf="selectedBooking.eventInfo?.description"><span>Description:</span> <strong>{{ selectedBooking.eventInfo?.description }}</strong></div>
+                <div class="dialog-row" *ngIf="selectedBooking.eventInfo?.artist"><span>Artist:</span> <strong>{{ selectedBooking.eventInfo?.artist }}</strong></div>
+            </section>
+        </div>
+    </p-dialog>
+    <style>
+        .modern-dialog {
+            width: 60vw !important;
+            max-width: 800px !important;
+        }
+        .modern-dialog .dialog-content {
+            padding: 2rem;
+            background: #fff;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            font-size: 1.05rem;
+        }
+        .dialog-section {
+            margin-bottom: 2rem;
+            padding: 1.25rem 1rem;
+            background: #f8f9fa;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .dialog-title {
+            margin-bottom: 1rem;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #374151;
+            letter-spacing: 0.02em;
+        }
+        .dialog-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .dialog-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .dialog-row span {
+            color: #6b7280;
+        }
+        .dialog-row strong {
+            color: #111827;
+            font-weight: 500;
+        }
+    </style>
+</p-card>

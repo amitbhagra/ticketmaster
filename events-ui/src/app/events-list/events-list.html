@@ -1,0 +1,212 @@
+<div class="flex justify-end items-center gap-2 mb-4" style="margin-right: 1.5rem; margin-top: 1rem;">
+  <i class="pi pi-user" style="font-size: 1.5rem;"></i>
+  <span class="font-semibold text-lg">{{ getUsername() }}</span>
+</div>
+
+<p-toast />
+
+<!-- <div>
+  <p-button label="Create New Event" (click)="showCreateNewEventModal = true;" />
+</div> -->
+<p-card header="Events List">
+  <div style="
+      max-height: 500px; 
+      overflow-y: auto; 
+      background: #f9fafb; 
+      border-radius: 1rem; 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); 
+      padding: 1rem;
+      scrollbar-width: thin;
+      scrollbar-color: #3b82f6 #e5e7eb;
+    " class="custom-scroll">
+    <style>
+      .custom-scroll::-webkit-scrollbar {
+        width: 8px;
+        background: #e5e7eb;
+        border-radius: 8px;
+      }
+
+      .custom-scroll::-webkit-scrollbar-thumb {
+        background: #3b82f6;
+        border-radius: 8px;
+      }
+    </style>
+
+    <p-table [value]="events()" [tableStyle]="{ 'min-width': '60rem' }">
+      <ng-template #caption>
+        <div class="flex items-center justify-between">
+          <span class="text-xl font-bold">Events</span>
+          @if(isAdminUser()) {
+            <p-button icon="pi pi-plus" rounded raised label="Create Event" (click)="showCreateNewEventModal = true;" />
+          }
+        </div>
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th>Category</th>
+          <th>Event</th>
+          <th>Venue</th>
+          <th>Date</th>
+          <th>Price</th>
+          <th>Seats Available</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-item>
+        <tr>
+          <td><span style="color: blue;" class="text-m font-medium text-surface-900 dark:text-surface-0 mt-2">{{
+              item.category }}</span></td>
+          <td>
+            <div>
+              <p-chip class="text-m font-medium text-surface-900 dark:text-surface-0 mt-2"
+                style="background-color: gray;color: white; "
+                label="{{item.name}} by {{item.artist}}" />
+            </div>
+          </td>
+          <td>{{item.venue}}</td>
+          <td>{{item.date|date:"dd/MM/yyyy"}}</td>
+          <td>{{ item.ticketPrice | currency: 'INR' }}</td>
+          <td>{{item.totalSeats}}</td>
+          <td>
+            <p-button icon="pi pi-shopping-cart" class="flex-auto md:flex-initial whitespace-nowrap" label="Book Now"
+              (click)="visible = true;selectedEventForBooking = item" />
+          </td>
+        </tr>
+      </ng-template>
+      
+    </p-table>
+
+  </div>
+</p-card>
+
+<p-dialog [(visible)]="visible" [modal]="true" [style]="{ width: 'auto' }" (onHide)="onDialogClose()">
+  <ng-template #header>
+    <div class="inline-flex items-center justify-center gap-2">
+      <div>
+        <p-chip class="text-m font-medium text-surface-900 dark:text-surface-0"
+        style="background-color: gray;color: white; " label="{{selectedEventForBooking.name}} by {{selectedEventForBooking.artist}}" />
+      </div>
+    </div>
+  </ng-template>
+
+  <div class="flex text-lg items-center gap-4 mb-2">
+    <label for="email" class="w-36">Venue Details</label>
+    <span style="color: black;"> {{selectedEventForBooking.venue}}</span>
+  </div>
+  <div class="flex text-lg items-center gap-4 mb-2">
+    <label for="email" class=" w-36">Ticket Price</label>
+    <span style="color: black;"> {{selectedEventForBooking.ticketPrice}} INR </span>
+  </div>
+  <div class="flex text-lg items-center gap-4 mb-2">
+    <label for="email" class=" w-36">Seats Available</label>
+    <span style="color: black;"> {{selectedEventForBooking.totalSeats}} </span>
+  </div>
+  <div class="flex text-lg items-center gap-4 mb-4">
+    <label for="username" class=" w-36">Quantity</label>
+    <p-inputnumber class="w-24" (ngModelChange)="onQuantityChange($event)" [max]="selectedEventForBooking.totalSeats"
+      [min]="1" [showButtons]="true" inputId="integeronly" class="flex-auto" [(ngModel)]="booking.quantity" />
+  </div>
+
+
+  <div class="flex items-center gap-4 mb-2 text-lg font-medium text-surface-900 dark:text-surface-0"
+    style="color: red;margin-top: 20px;">
+    <label for="email" class=" w-36">Total Price</label>
+    <span> {{selectedEventForBooking.ticketPrice? selectedEventForBooking.ticketPrice * (booking.quantity || 0) : 0}}
+      INR </span>
+  </div>
+
+
+  <ng-template #footer>
+
+    <p-button icon="pi" class="flex-auto md:flex-initial whitespace-nowrap" label="Book Now"
+      (click)="createNewBooking()" />
+  </ng-template>
+
+
+</p-dialog>
+
+<p-dialog [(visible)]="showCreateNewEventModal" header="Create New Event" [modal]="true" [style]="{ width: '35rem'}">
+  <!-- <ng-template #header>
+    <div class="inline-flex items-center justify-center gap-2">
+      Create New Event
+    </div>
+  </ng-template> -->
+
+  <div class="flex text-lg items-center gap-4 mb-2" style="margin-top: 20px;">
+    <label for="email" class="w-36">Name</label>
+    <input type="text" pInputText [(ngModel)]="newEvent.name" />
+  </div>
+  <div class="flex text-lg items-center gap-4 mb-2">
+    <label for="email" class=" w-36">Artist</label>
+    <input type="text" pInputText [(ngModel)]="newEvent.artist" />
+  </div>
+  <div class="flex text-lg items-center gap-4 mb-2">
+    <label for="email" class=" w-36">Category</label>
+    <input type="text" pInputText [(ngModel)]="newEvent.category" />
+  </div>
+
+  <div class="flex text-lg items-center gap-4 mb-2">
+    <label for="email" class=" w-36">Location</label>
+    <p-select 
+      appendTo="body"
+      [options]="venueOptions"
+      [(ngModel)]="newEvent.venue"
+      optionLabel="name"
+      optionValue="id"
+      placeholder="Select Venue"
+      class="w-full md:w-60" />
+  </div>
+
+  <div class="flex text-lg items-center gap-4 mb-2">
+    <label for="email" class=" w-36">Seats Available</label>
+    <input type="text" pInputText [(ngModel)]="newEvent.totalSeats" />
+  </div>
+
+  <div class="flex text-lg items-center gap-4 mb-2">
+    <label for="email" class=" w-36">Ticket Price</label>
+    <input type="text" pInputText [(ngModel)]="newEvent.ticketPrice" />
+  </div>
+  <div class="flex text-lg items-center gap-4 mb-2">
+    <label for="email" class=" w-36">Date</label>
+    <p-datepicker [(ngModel)]="newEvent.date" />
+
+  </div>
+  <div class="flex text-lg items-center gap-4 mb-2">
+    <label for="email" class=" w-36">Time</label>
+    <input type="text" pInputText [(ngModel)]="newEvent.time" />
+  </div>
+  <ng-template #footer>
+    <!-- <p-button label="Cancel" [text]="true" severity="danger" (click)="visible = false" /> -->
+
+    <p-button icon="pi" class="flex-auto md:flex-initial whitespace-nowrap" label="Create" (click)="createNewEvent()" />
+  </ng-template>
+</p-dialog>
+
+
+<p-dialog header="Initiate Payment" [modal]="true" [(visible)]="showPaymentDialog" [style]="{ width: '25rem' }">
+  @if(validatePaymentPayload.otp) {
+  <p>OTP generated.</p>
+  } @else {
+  <p>Waiting for OTP.</p>
+  }
+  <div class="flex items-center gap-4 mb-4">
+    <div class="card flex justify-center">
+      <p-inputotp [(ngModel)]="validatePaymentPayload.otp" [length]="6" />
+    </div>
+  </div>
+
+  <div class="flex items-center gap-4 mb-4">
+    <p-select appendTo="body" [options]="paymentModeList" [(ngModel)]="validatePaymentPayload.paymentMode"
+      optionLabel="name" optionValue="code" placeholder="Select Payment Mode" class="w-full md:w-60" />
+  </div>
+
+  <!-- <div class="flex items-center gap-4 mb-8 ">
+      <p-select appendTo="body" [options]="paymentModeList" [(ngModel)]="validatePaymentPayload.paymentMode" optionLabel="name" optionValue="code" placeholder="Select Payment Mode" class="w-full md:w-61"/>
+  </div> -->
+
+  <div class="flex justify-end gap-2">
+    <p-button label="Cancel" severity="secondary" (click)="showPaymentDialog = false" />
+    <p-button label="Submit" [disabled]="!validatePaymentPayload.paymentMode || !validatePaymentPayload.otp"
+      (click)="showPaymentDialog = false;validatePayment()" />
+  </div>
+</p-dialog>

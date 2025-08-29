@@ -1,0 +1,22 @@
+.dashboard-container {
+  height: 100vh;
+}
+
+mat-sidenav {
+  width: 220px;
+  background: #1976d2;
+  color: #fff;
+}
+
+mat-nav-list a {
+  color: #fff;
+  font-weight: 500;
+}
+
+mat-nav-list a.active {
+  background: rgba(255,255,255,0.1);
+}
+
+mat-icon {
+  margin-right: 12px;
+}

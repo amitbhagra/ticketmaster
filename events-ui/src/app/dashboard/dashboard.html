@@ -1,0 +1,10 @@
+<p-splitter [panelSizes]="[15, 85]"  class="mb-8">
+  <ng-template #panel>
+    <div class="card flex justify-center flex items-center gap-4 mb-2 text-lg font-medium text-surface-900 dark:text-surface-0">
+      <p-panelmenu [model]="items" class="w-full md:w-80" />
+  </div>
+  </ng-template>
+  <ng-template #panel>
+    <router-outlet></router-outlet>
+  </ng-template>
+</p-splitter>

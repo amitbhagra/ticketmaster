@@ -1,0 +1,75 @@
+.event-viewport {
+  height: 600px;
+  width: 100%;
+  max-width: 600px;
+  margin: 40px auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(25, 118, 210, 0.08), 0 1.5px 6px rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+}
+
+mat-list {
+  width: 100%;
+}
+
+mat-list-item {
+  margin: 16px 0;
+  border-radius: 12px;
+  background: #f5f7fa;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.04);
+  transition: box-shadow 0.2s;
+  padding: 0 12px;
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+}
+
+mat-list-item:hover {
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.10);
+  background: #e3f2fd;
+}
+
+.event-item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 12px 0;
+}
+
+.event-item h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.2rem;
+  color: #1976d2;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.event-meta {
+  display: flex;
+  gap: 24px;
+  font-size: 0.97em;
+  color: #555;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.event-meta mat-icon {
+  font-size: 18px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+p {
+  margin: 0 0 4px 0;
+  color: #333;
+  font-size: 1em;
+}
+
+.newEvent {
+  margin: 5px;
+}
