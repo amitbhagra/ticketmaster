@@ -1,212 +1,249 @@
-<div class="flex justify-end items-center gap-2 mb-4" style="margin-right: 1.5rem; margin-top: 1rem;">
-  <i class="pi pi-user" style="font-size: 1.5rem;"></i>
-  <span class="font-semibold text-lg">{{ getUsername() }}</span>
-</div>
+<section class="events-header" aria-label="User context">
+  <div class="hero-intro">
+    <p class="hero-kicker">Ticket Discovery</p>
+    <h1>Find the next sold-out experience</h1>
+    <p>Compare venue inventory, pricing, and availability in one curated events feed.</p>
+  </div>
+
+  <div class="hero-meta" aria-label="Live stats and profile">
+    <article class="meta-card" aria-label="Total live events">
+      <span class="meta-label">Live Events</span>
+      <strong>{{ events().length }}</strong>
+    </article>
+    <div class="user-chip" tabindex="0">
+      <i class="pi pi-user" aria-hidden="true"></i>
+      <span>{{ username() }}</span>
+    </div>
+  </div>
+</section>
 
 <p-toast />
 
-<!-- <div>
-  <p-button label="Create New Event" (click)="showCreateNewEventModal = true;" />
-</div> -->
-<p-card header="Events List">
-  <div style="
-      max-height: 500px; 
-      overflow-y: auto; 
-      background: #f9fafb; 
-      border-radius: 1rem; 
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); 
-      padding: 1rem;
-      scrollbar-width: thin;
-      scrollbar-color: #3b82f6 #e5e7eb;
-    " class="custom-scroll">
-    <style>
-      .custom-scroll::-webkit-scrollbar {
-        width: 8px;
-        background: #e5e7eb;
-        border-radius: 8px;
-      }
+<p-card header="Events Marketplace">
+  @if (eventsErrorMessage(); as errorMessage) {
+    <p class="error-banner" role="alert">{{ errorMessage }}</p>
+  }
 
-      .custom-scroll::-webkit-scrollbar-thumb {
-        background: #3b82f6;
-        border-radius: 8px;
-      }
-    </style>
+  @defer (on idle) {
+    <div class="events-table-wrapper" aria-live="polite">
+      <p-table [value]="events()" [tableStyle]="{ 'min-width': '60rem' }">
+        <ng-template #caption>
+          <div class="table-caption">
+            <h2>Available Events</h2>
+            <span class="table-subtitle">Sorted by location proximity and availability.</span>
+            @if (isAdminUser()) {
+              <p-button icon="pi pi-plus" rounded label="Create Event" (click)="showCreateNewEventModal.set(true)" />
+            }
+          </div>
+        </ng-template>
 
-    <p-table [value]="events()" [tableStyle]="{ 'min-width': '60rem' }">
-      <ng-template #caption>
-        <div class="flex items-center justify-between">
-          <span class="text-xl font-bold">Events</span>
-          @if(isAdminUser()) {
-            <p-button icon="pi pi-plus" rounded raised label="Create Event" (click)="showCreateNewEventModal = true;" />
-          }
-        </div>
-      </ng-template>
-      <ng-template #header>
-        <tr>
-          <th>Category</th>
-          <th>Event</th>
-          <th>Venue</th>
-          <th>Date</th>
-          <th>Price</th>
-          <th>Seats Available</th>
-          <th></th>
-        </tr>
-      </ng-template>
-      <ng-template #body let-item>
-        <tr>
-          <td><span style="color: blue;" class="text-m font-medium text-surface-900 dark:text-surface-0 mt-2">{{
-              item.category }}</span></td>
-          <td>
-            <div>
-              <p-chip class="text-m font-medium text-surface-900 dark:text-surface-0 mt-2"
-                style="background-color: gray;color: white; "
-                label="{{item.name}} by {{item.artist}}" />
-            </div>
-          </td>
-          <td>{{item.venue}}</td>
-          <td>{{item.date|date:"dd/MM/yyyy"}}</td>
-          <td>{{ item.ticketPrice | currency: 'INR' }}</td>
-          <td>{{item.totalSeats}}</td>
-          <td>
-            <p-button icon="pi pi-shopping-cart" class="flex-auto md:flex-initial whitespace-nowrap" label="Book Now"
-              (click)="visible = true;selectedEventForBooking = item" />
-          </td>
-        </tr>
-      </ng-template>
-      
-    </p-table>
+        <ng-template #header>
+          <tr>
+            <th scope="col">Category</th>
+            <th scope="col">Event</th>
+            <th scope="col">Venue</th>
+            <th scope="col">Date</th>
+            <th scope="col">Price</th>
+            <th scope="col">Seats Available</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </ng-template>
 
-  </div>
+        <ng-template #body let-item>
+          <tr tabindex="0" (keydown.enter)="openBookingDialog(item)">
+            <td><span class="category">{{ item.category }}</span></td>
+            <td>
+              <p-chip class="event-chip" label="{{ item.name }} by {{ item.artist }}" />
+            </td>
+            <td>{{ item.venue }}</td>
+            <td>{{ item.date | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ item.ticketPrice | currency: 'INR' }}</td>
+            <td>{{ item.totalSeats }}</td>
+            <td>
+              <p-button
+                icon="pi pi-shopping-cart"
+                label="Book Now"
+                [attr.aria-label]="'Book tickets for ' + item.name"
+                (click)="openBookingDialog(item)"
+              />
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  } @placeholder {
+    <p class="loading-copy">Loading events...</p>
+  }
 </p-card>
 
-<p-dialog [(visible)]="visible" [modal]="true" [style]="{ width: 'auto' }" (onHide)="onDialogClose()">
+<p-dialog
+  [visible]="showBookingDialog()"
+  (visibleChange)="showBookingDialog.set($event)"
+  [modal]="true"
+  [style]="{ width: '30rem' }"
+  (onHide)="closeBookingDialog()"
+>
   <ng-template #header>
-    <div class="inline-flex items-center justify-center gap-2">
-      <div>
-        <p-chip class="text-m font-medium text-surface-900 dark:text-surface-0"
-        style="background-color: gray;color: white; " label="{{selectedEventForBooking.name}} by {{selectedEventForBooking.artist}}" />
+    <div class="dialog-header">
+      @if (selectedEvent(); as eventItem) {
+        <p-chip class="event-chip" label="{{ eventItem.name }} by {{ eventItem.artist }}" />
+      }
+    </div>
+  </ng-template>
+
+  @if (selectedEvent(); as eventItem) {
+    <section class="booking-content" aria-label="Booking details">
+      <div class="detail-row">
+        <span>Venue</span>
+        <strong>{{ eventItem.venue }}</strong>
       </div>
-    </div>
-  </ng-template>
+      <div class="detail-row">
+        <span>Ticket Price</span>
+        <strong>{{ eventItem.ticketPrice }} INR</strong>
+      </div>
+      <div class="detail-row">
+        <span>Seats Available</span>
+        <strong>{{ eventItem.totalSeats }}</strong>
+      </div>
 
-  <div class="flex text-lg items-center gap-4 mb-2">
-    <label for="email" class="w-36">Venue Details</label>
-    <span style="color: black;"> {{selectedEventForBooking.venue}}</span>
-  </div>
-  <div class="flex text-lg items-center gap-4 mb-2">
-    <label for="email" class=" w-36">Ticket Price</label>
-    <span style="color: black;"> {{selectedEventForBooking.ticketPrice}} INR </span>
-  </div>
-  <div class="flex text-lg items-center gap-4 mb-2">
-    <label for="email" class=" w-36">Seats Available</label>
-    <span style="color: black;"> {{selectedEventForBooking.totalSeats}} </span>
-  </div>
-  <div class="flex text-lg items-center gap-4 mb-4">
-    <label for="username" class=" w-36">Quantity</label>
-    <p-inputnumber class="w-24" (ngModelChange)="onQuantityChange($event)" [max]="selectedEventForBooking.totalSeats"
-      [min]="1" [showButtons]="true" inputId="integeronly" class="flex-auto" [(ngModel)]="booking.quantity" />
-  </div>
+      <div class="detail-row">
+        <label for="ticket-quantity">Quantity</label>
+        <p-inputnumber
+          inputId="ticket-quantity"
+          [ngModel]="booking().quantity"
+          (ngModelChange)="onQuantityChange($event)"
+          [max]="eventItem.totalSeats"
+          [min]="1"
+          [showButtons]="true"
+        />
+      </div>
 
-
-  <div class="flex items-center gap-4 mb-2 text-lg font-medium text-surface-900 dark:text-surface-0"
-    style="color: red;margin-top: 20px;">
-    <label for="email" class=" w-36">Total Price</label>
-    <span> {{selectedEventForBooking.ticketPrice? selectedEventForBooking.ticketPrice * (booking.quantity || 0) : 0}}
-      INR </span>
-  </div>
-
-
-  <ng-template #footer>
-
-    <p-button icon="pi" class="flex-auto md:flex-initial whitespace-nowrap" label="Book Now"
-      (click)="createNewBooking()" />
-  </ng-template>
-
-
-</p-dialog>
-
-<p-dialog [(visible)]="showCreateNewEventModal" header="Create New Event" [modal]="true" [style]="{ width: '35rem'}">
-  <!-- <ng-template #header>
-    <div class="inline-flex items-center justify-center gap-2">
-      Create New Event
-    </div>
-  </ng-template> -->
-
-  <div class="flex text-lg items-center gap-4 mb-2" style="margin-top: 20px;">
-    <label for="email" class="w-36">Name</label>
-    <input type="text" pInputText [(ngModel)]="newEvent.name" />
-  </div>
-  <div class="flex text-lg items-center gap-4 mb-2">
-    <label for="email" class=" w-36">Artist</label>
-    <input type="text" pInputText [(ngModel)]="newEvent.artist" />
-  </div>
-  <div class="flex text-lg items-center gap-4 mb-2">
-    <label for="email" class=" w-36">Category</label>
-    <input type="text" pInputText [(ngModel)]="newEvent.category" />
-  </div>
-
-  <div class="flex text-lg items-center gap-4 mb-2">
-    <label for="email" class=" w-36">Location</label>
-    <p-select 
-      appendTo="body"
-      [options]="venueOptions"
-      [(ngModel)]="newEvent.venue"
-      optionLabel="name"
-      optionValue="id"
-      placeholder="Select Venue"
-      class="w-full md:w-60" />
-  </div>
-
-  <div class="flex text-lg items-center gap-4 mb-2">
-    <label for="email" class=" w-36">Seats Available</label>
-    <input type="text" pInputText [(ngModel)]="newEvent.totalSeats" />
-  </div>
-
-  <div class="flex text-lg items-center gap-4 mb-2">
-    <label for="email" class=" w-36">Ticket Price</label>
-    <input type="text" pInputText [(ngModel)]="newEvent.ticketPrice" />
-  </div>
-  <div class="flex text-lg items-center gap-4 mb-2">
-    <label for="email" class=" w-36">Date</label>
-    <p-datepicker [(ngModel)]="newEvent.date" />
-
-  </div>
-  <div class="flex text-lg items-center gap-4 mb-2">
-    <label for="email" class=" w-36">Time</label>
-    <input type="text" pInputText [(ngModel)]="newEvent.time" />
-  </div>
-  <ng-template #footer>
-    <!-- <p-button label="Cancel" [text]="true" severity="danger" (click)="visible = false" /> -->
-
-    <p-button icon="pi" class="flex-auto md:flex-initial whitespace-nowrap" label="Create" (click)="createNewEvent()" />
-  </ng-template>
-</p-dialog>
-
-
-<p-dialog header="Initiate Payment" [modal]="true" [(visible)]="showPaymentDialog" [style]="{ width: '25rem' }">
-  @if(validatePaymentPayload.otp) {
-  <p>OTP generated.</p>
-  } @else {
-  <p>Waiting for OTP.</p>
+      <div class="detail-row total-row" aria-live="polite">
+        <span>Total Price</span>
+        <strong>{{ totalPrice() }} INR</strong>
+      </div>
+    </section>
   }
-  <div class="flex items-center gap-4 mb-4">
-    <div class="card flex justify-center">
-      <p-inputotp [(ngModel)]="validatePaymentPayload.otp" [length]="6" />
+
+  <ng-template #footer>
+    <p-button label="Book Now" (click)="createNewBooking()" />
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  [visible]="showCreateNewEventModal()"
+  (visibleChange)="showCreateNewEventModal.set($event)"
+  header="Create New Event"
+  [modal]="true"
+  [style]="{ width: '38rem' }"
+>
+  <form class="create-event-form" aria-label="Create new event form" (ngSubmit)="$event.preventDefault()">
+    <div class="field-row">
+      <label for="new-event-name">Name</label>
+      <input id="new-event-name" type="text" pInputText [ngModel]="newEvent().name" (ngModelChange)="updateNewEventField('name', $event)" name="name" />
     </div>
+    <div class="field-row">
+      <label for="new-event-artist">Artist</label>
+      <input id="new-event-artist" type="text" pInputText [ngModel]="newEvent().artist" (ngModelChange)="updateNewEventField('artist', $event)" name="artist" />
+    </div>
+    <div class="field-row">
+      <label for="new-event-category">Category</label>
+      <input id="new-event-category" type="text" pInputText [ngModel]="newEvent().category" (ngModelChange)="updateNewEventField('category', $event)" name="category" />
+    </div>
+    <div class="field-row">
+      <label for="new-event-venue">Location</label>
+      <p-select
+        inputId="new-event-venue"
+        appendTo="body"
+        [options]="venueOptions()"
+        [ngModel]="newEvent().venue"
+        (ngModelChange)="updateNewEventField('venue', $event)"
+        [placeholder]="'Select Venue'"
+        [style]="{ width: '100%' }"
+        name="venue"
+      />
+    </div>
+    <div class="field-row">
+      <label for="new-event-seats">Seats Available</label>
+      <p-inputnumber
+        inputId="new-event-seats"
+        [ngModel]="newEvent().totalSeats"
+        (ngModelChange)="updateNewEventField('totalSeats', $event)"
+        [min]="1"
+        [showButtons]="true"
+        name="totalSeats"
+      />
+    </div>
+    <div class="field-row">
+      <label for="new-event-price">Ticket Price</label>
+      <p-inputnumber
+        inputId="new-event-price"
+        [ngModel]="newEvent().ticketPrice"
+        (ngModelChange)="updateNewEventField('ticketPrice', $event)"
+        [min]="1"
+        [showButtons]="true"
+        name="ticketPrice"
+      />
+    </div>
+    <div class="field-row">
+      <label for="new-event-date">Date</label>
+      <p-datepicker inputId="new-event-date" [ngModel]="newEvent().date" (ngModelChange)="updateNewEventField('date', $event)" name="date" />
+    </div>
+    <div class="field-row">
+      <label for="new-event-time">Time</label>
+      <input id="new-event-time" type="text" pInputText [ngModel]="newEvent().time" (ngModelChange)="updateNewEventField('time', $event)" name="time" />
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Create" (click)="createNewEvent()" />
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  header="Initiate Payment"
+  [modal]="true"
+  [visible]="showPaymentDialog()"
+  (visibleChange)="showPaymentDialog.set($event)"
+  [style]="{ width: '26rem' }"
+  (onHide)="closePaymentDialog()"
+>
+  @if (paymentLoading()) {
+    <p class="loading-copy">Generating OTP...</p>
+  } @else if (validatePaymentPayload().otp) {
+    <p class="status-copy">OTP generated.</p>
+  } @else {
+    <p class="status-copy">Waiting for OTP.</p>
+  }
+
+  <div class="payment-field" aria-live="polite">
+    <p-inputotp
+      [ngModel]="validatePaymentPayload().otp"
+      (ngModelChange)="updatePaymentOtp($event)"
+      [length]="6"
+      [disabled]="paymentLoading()"
+    />
   </div>
 
-  <div class="flex items-center gap-4 mb-4">
-    <p-select appendTo="body" [options]="paymentModeList" [(ngModel)]="validatePaymentPayload.paymentMode"
-      optionLabel="name" optionValue="code" placeholder="Select Payment Mode" class="w-full md:w-60" />
+  <div class="payment-field">
+    <p-select
+      appendTo="body"
+      [options]="paymentModeList"
+      [ngModel]="validatePaymentPayload().paymentMode"
+      (ngModelChange)="updatePaymentMode($event)"
+      optionLabel="name"
+      optionValue="code"
+      placeholder="Select Payment Mode"
+      [style]="{ width: '100%' }"
+    />
   </div>
 
-  <!-- <div class="flex items-center gap-4 mb-8 ">
-      <p-select appendTo="body" [options]="paymentModeList" [(ngModel)]="validatePaymentPayload.paymentMode" optionLabel="name" optionValue="code" placeholder="Select Payment Mode" class="w-full md:w-61"/>
-  </div> -->
-
-  <div class="flex justify-end gap-2">
-    <p-button label="Cancel" severity="secondary" (click)="showPaymentDialog = false" />
-    <p-button label="Submit" [disabled]="!validatePaymentPayload.paymentMode || !validatePaymentPayload.otp"
-      (click)="showPaymentDialog = false;validatePayment()" />
+  <div class="dialog-actions">
+    <p-button label="Cancel" severity="secondary" (click)="closePaymentDialog()" />
+    <p-button
+      label="Submit"
+      [disabled]="!validatePaymentPayload().paymentMode || !validatePaymentPayload().otp || paymentLoading()"
+      (click)="validatePayment()"
+    />
   </div>
 </p-dialog>

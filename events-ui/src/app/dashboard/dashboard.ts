@@ -1,24 +1,23 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { PanelMenu } from 'primeng/panelmenu';
 import { SplitterModule } from 'primeng/splitter';
 import { KeycloakService } from '../services/keycloak.service';
+
 @Component({
   selector: 'app-dashboard',
-  standalone: true,
-  imports: [CommonModule, RouterModule,  SplitterModule, PanelMenu],
+  imports: [SplitterModule, PanelMenu, RouterOutlet],
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.scss']
+  styleUrl: './dashboard.scss',
+  host: {
+    class: 'dashboard-shell',
+  },
 })
-export class Dashboard implements OnInit {
-  private keycloak = inject(KeycloakService);
-  items: MenuItem[] = [];
+export class Dashboard {
+  private readonly keycloak = inject(KeycloakService);
 
-  constructor(private router: Router) {}
-  ngOnInit() {
-    this.items = [
+  readonly items = signal<MenuItem[]>([
       {
         label: 'Events List',
         routerLink: 'events'
@@ -31,13 +30,12 @@ export class Dashboard implements OnInit {
         label: 'Logout',
         icon: 'pi pi-sign-out',
         command: () => {
-            this.logout();
+          this.logout();
         }
-    }
-    ];
-  }
+      }
+    ]);
 
-  logout() {
+  logout(): void {
     this.keycloak.logout();
   }
 }

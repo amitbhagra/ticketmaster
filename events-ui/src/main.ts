@@ -10,6 +10,18 @@ import { HttpInterceptorFn, provideHttpClient, withInterceptors } from '@angular
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { mockApiInterceptor } from './app/services/mock-api.interceptor';
+
+interface RuntimeConfig {
+  baseUrl?: string;
+  enableSecurity?: boolean;
+  keycloak?: {
+    clientId: string;
+    realm: string;
+    url: string;
+  };
+  useMockApi?: boolean;
+}
 
 // Remove direct instantiation
 let keycloakService: KeycloakService;
@@ -37,14 +49,18 @@ export const authHeaderInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req);
 };
 
-function bootstrapApp() {
+function bootstrapApp(useMockApi: boolean) {
+  const interceptors: HttpInterceptorFn[] = useMockApi
+    ? [mockApiInterceptor, ngrokHeaderInterceptor, authHeaderInterceptor]
+    : [ngrokHeaderInterceptor, authHeaderInterceptor];
+
   bootstrapApplication(App, {
     providers: [
       { provide: KeycloakService, useValue: keycloakService },
       { provide: ApiConfigService, useValue: apiConfigService },
       provideZonelessChangeDetection(),
       provideRouter(routes),
-      provideHttpClient(withInterceptors([ngrokHeaderInterceptor, authHeaderInterceptor])),
+      provideHttpClient(withInterceptors(interceptors)),
       provideAnimations(),
       providePrimeNG({
         theme: { preset: Aura, options: { darkModeSelector: '.p-dark' } },
@@ -55,20 +71,25 @@ function bootstrapApp() {
 
 fetch('/assets/config.json')
   .then(res => res.json())
-  .then(config => {
+  .then((config: RuntimeConfig) => {
+    const useMockApi = !!config.useMockApi;
+    const shouldEnableSecurity = !!config.enableSecurity && !useMockApi;
+
     keycloakService = new KeycloakService(config.keycloak);
+    apiConfigService.setMockMode(useMockApi);
     if (config.baseUrl) {
       apiConfigService.setBaseUrl(config.baseUrl);
     }
-    if (config.enableSecurity) {
+    if (shouldEnableSecurity) {
       keycloakService.init().then(() => {
-        bootstrapApp();
+        bootstrapApp(useMockApi);
       });
     } else {
-      bootstrapApp();
+      bootstrapApp(useMockApi);
     }
   })
   .catch(() => {
     keycloakService = new KeycloakService();
-    bootstrapApp();
+    apiConfigService.setMockMode(false);
+    bootstrapApp(false);
   });

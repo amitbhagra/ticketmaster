@@ -31,6 +31,7 @@ This allows you to enable/disable security and set backend URLs without rebuildi
 
 ```json
 {
+  "useMockApi": false,
   "enableSecurity": true,
   "baseUrl": "http://localhost:8080",
   "keycloak": {
@@ -41,9 +42,42 @@ This allows you to enable/disable security and set backend URLs without rebuildi
 }
 ```
 
+- `useMockApi`: Set to `true` to run all API requests through an in-memory mock backend for offline testing.
 - `enableSecurity`: Set to `true` to enable Keycloak authentication, or `false` to run without authentication.
 - `baseUrl`: The base URL for backend API requests.
 - `keycloak`: Keycloak server configuration (used only if `enableSecurity` is `true`).
+
+### Offline Mock Mode
+
+To run the app without backend dependencies:
+
+1. Edit `src/assets/config.json` and set:
+
+```json
+{
+  "useMockApi": true,
+  "enableSecurity": false
+}
+```
+
+2. Start the app normally:
+
+```bash
+npm run start
+```
+
+When mock mode is enabled, the app simulates these APIs with in-memory data:
+
+- `POST /api/v1/eventslist/distance`
+- `GET /api/v1/events/venues`
+- `POST /api/v1/events`
+- `POST /api/v1/bookings`
+- `GET /api/v1/bookings/user/:userId`
+- `GET /api/v1/bookings/:id`
+- `GET /api/v1/payments/initiate/:id`
+- `POST /api/v1/payments/validate`
+
+The in-memory dataset resets whenever the app reloads.
 
 ## Technical Structure
 

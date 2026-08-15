@@ -1,9 +1,15 @@
 import Keycloak from 'keycloak-js';
 
-export class KeycloakService {
-  private keycloak: Keycloak;
+interface KeycloakConfig {
+  clientId: string;
+  realm: string;
+  url: string;
+}
 
-  constructor(config?: { url: string; realm: string; clientId: string }) {
+export class KeycloakService {
+  private readonly keycloak: Keycloak;
+
+  constructor(config?: KeycloakConfig) {
     this.keycloak = new Keycloak(
       config ?? {
         url: 'http://localhost:8082',
@@ -20,12 +26,12 @@ export class KeycloakService {
     });
   }
 
-  login() {
-    this.keycloak.login();
+  login(): Promise<void> {
+    return this.keycloak.login();
   }
 
-  logout() {
-    this.keycloak.logout();
+  logout(): Promise<void> {
+    return this.keycloak.logout();
   }
 
   getToken(): string | undefined {

@@ -1,22 +1,114 @@
-.dashboard-container {
-  height: 100vh;
+.dashboard-layout {
+  min-height: calc(100vh - 2rem);
 }
 
-mat-sidenav {
-  width: 220px;
-  background: #1976d2;
-  color: #fff;
+.dashboard-splitter {
+  min-height: calc(100vh - 2rem);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--color-border-strong);
+  background: var(--surface-elevated);
+  box-shadow: 0 20px 44px rgba(17, 40, 69, 0.12);
 }
 
-mat-nav-list a {
-  color: #fff;
-  font-weight: 500;
+.nav-panel {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: var(--space-4);
+  height: 100%;
+  padding: var(--space-5);
+  background:
+    radial-gradient(circle at 16% 8%, rgba(255, 255, 255, 0.25) 0, transparent 34%),
+    linear-gradient(166deg, var(--surface-brand), var(--surface-brand-alt));
+  color: var(--text-on-brand);
 }
 
-mat-nav-list a.active {
-  background: rgba(255,255,255,0.1);
+.brand-block {
+  display: grid;
+  gap: var(--space-2);
 }
 
-mat-icon {
-  margin-right: 12px;
+.brand-kicker {
+  margin: 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+}
+
+.nav-title {
+  margin: 0;
+  font-size: 1.65rem;
+  line-height: 1.2;
+}
+
+.brand-copy {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  opacity: 0.9;
+}
+
+.nav-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.menu {
+  display: block;
+}
+
+.support-card {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  backdrop-filter: blur(2px);
+}
+
+.support-label {
+  font-size: 0.75rem;
+  opacity: 0.9;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.content-panel {
+  height: 100%;
+  padding: var(--space-5);
+  background: var(--surface-default);
+}
+
+.content-header {
+  margin-bottom: var(--space-5);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-subtle);
+  background: linear-gradient(110deg, #fff 0%, #f5faff 75%);
+}
+
+.content-header h2 {
+  margin: 0 0 var(--space-2);
+  font-size: 1.35rem;
+}
+
+.content-header p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.content-loading {
+  color: var(--text-muted);
+}
+
+@media (max-width: 960px) {
+  .content-panel {
+    padding: var(--space-4);
+  }
+
+  .content-header {
+    margin-bottom: var(--space-4);
+  }
 }

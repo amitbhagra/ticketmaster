@@ -8,118 +8,96 @@
 @tailwind components;
 @tailwind utilities;
 @import "primeicons/primeicons.css";
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Outfit:wght@500;600;700&display=swap');
 
 html {
-  @include mat.theme((color: (primary: mat.$magenta-palette,
-        tertiary: mat.$violet-palette,
+  @include mat.theme((color: (primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
       ),
-      typography: Roboto,
+      typography: "Manrope",
       density: 0,
     ));
 }
-
-body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
-  margin: 0;
-}
-
-/* You can add global styles to this file, and also import other style files */
 
 html,
 body {
   height: 100%;
 }
 
-body {
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-}
-
-
-
-
 :root {
-  --body-bg: var(--p-surface-50);
-  --body-text-color: var(--p-surface-900);
-  --card-border: 1px solid var(--border-color);
-  --card-bg: var(--p-surface-0);
-  --border-color: var(--p-surface-200);
-  --text-color: var(--p-surface-700);
-  --overlay-background: #ffffff;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 2rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-pill: 999px;
+
+  --color-brand-400: #42a0ff;
+  --color-brand-500: #0b84f3;
+  --color-brand-700: #045ec2;
+  --color-border-subtle: #d0dceb;
+  --color-border-strong: #afc3db;
+  --color-danger-100: #ffe7ea;
+  --color-danger-500: #d94f66;
+  --color-danger-700: #93263a;
+  --color-success-100: #e7f8ee;
+  --color-success-700: #1e7a47;
+
+  --surface-default: #edf3fa;
+  --surface-elevated: #ffffff;
+  --surface-muted: #f5f9ff;
+  --surface-brand: #0b84f3;
+  --surface-brand-alt: #0d67c4;
+  --surface-dark: #12253b;
+
+  --text-default: #1d2f3f;
+  --text-muted: #4b6074;
+  --text-on-brand: #f6fbff;
+
+  --p-primary-color: var(--color-brand-500);
+  --p-primary-contrast-color: #ffffff;
+  --p-content-background: var(--surface-elevated);
+  --p-content-border-color: var(--color-border-subtle);
 }
 
-:root[class='p-dark'] {
-  --body-bg: var(--p-surface-950);
-  --body-text-color: var(--p-surface-50);
-  --card-border: 1px solid transparent;
-  --card-bg: var(--p-surface-900);
-  --border-color: rgba(255, 255, 255, 0.1);
-  --text-color: var(--p-surface-0);
-  --overlay-background: var(--p-surface-900);
+* {
+  box-sizing: border-box;
 }
 
 html {
-  font-size: 14px;
+  font-size: 15px;
 }
 
 body {
-  margin: 0px;
+  margin: 0;
   min-height: 100%;
   overflow-x: hidden;
-  overflow-y: hidden;
-  background-color: var(--body-bg);
-  font-weight: normal;
-  color: var(--body-text-color);
+  background:
+    radial-gradient(circle at 2% 12%, rgba(66, 160, 255, 0.24) 0, transparent 26%),
+    radial-gradient(circle at 90% 8%, rgba(11, 132, 243, 0.16) 0, transparent 32%),
+    linear-gradient(125deg, #f6fbff 0%, #edf3fa 46%, #e7f0fb 100%),
+    var(--surface-default);
+  color: var(--text-default);
+  font-family: "Manrope", "Noto Sans", sans-serif;
   padding: 1rem;
 }
 
 .card {
-  background: var(--card-bg);
-  border: var(--card-border);
-  padding: 2rem;
-  border-radius: 10px;
-  margin-bottom: 1rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border-subtle);
+  background: var(--surface-elevated);
+  padding: var(--space-4);
+  box-shadow: 0 14px 34px rgba(20, 50, 86, 0.08);
 }
 
-.p-dataview-content {
-  max-height: 89vh;
-  /* or any fixed height */
-  overflow-y: auto;
-}
-
-.card {
-  padding: 1rem;
-}
-
-p-card-content {
-  padding-top: 10px;
-}
-
-.p-card-title {
-  color: blue;
-}
-
-.p-panelmenu-panel {
-  border-color: blue !important;
-}
-
-.p-inputnumber {
-  font-weight: bold;
-}
-
-.p-button {
-  background: lightblue!important;
-  color: black!important;
+h1,
+h2,
+h3 {
+  font-family: "Outfit", "Manrope", sans-serif;
+  letter-spacing: 0.01em;
 }

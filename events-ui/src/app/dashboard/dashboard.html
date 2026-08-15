@@ -1,10 +1,32 @@
-<p-splitter [panelSizes]="[15, 85]"  class="mb-8">
-  <ng-template #panel>
-    <div class="card flex justify-center flex items-center gap-4 mb-2 text-lg font-medium text-surface-900 dark:text-surface-0">
-      <p-panelmenu [model]="items" class="w-full md:w-80" />
-  </div>
-  </ng-template>
-  <ng-template #panel>
-    <router-outlet></router-outlet>
-  </ng-template>
-</p-splitter>
+<main class="dashboard-layout" aria-label="Event booking dashboard">
+  <p-splitter [panelSizes]="[20, 80]" class="dashboard-splitter">
+    <ng-template #panel>
+      <section class="nav-panel" aria-label="Primary navigation">
+        <div class="brand-block">
+          <p class="brand-kicker">Experience Platform</p>
+          <h1 class="nav-title">TicketMaster Pro</h1>
+          <p class="brand-copy">Discover events, manage bookings, and complete checkout in one streamlined workflow.</p>
+        </div>
+        <div class="nav-divider" aria-hidden="true"></div>
+        <p-panelmenu [model]="items()" class="menu" aria-label="Dashboard menu" />
+        <div class="support-card" role="note" aria-label="Support information">
+          <span class="support-label">Need help?</span>
+          <strong>support@ticketmaster.pro</strong>
+        </div>
+      </section>
+    </ng-template>
+    <ng-template #panel>
+      <section class="content-panel" tabindex="-1" aria-label="Page content">
+        <header class="content-header">
+          <h2>Operations Console</h2>
+          <p>Live inventory, bookings, and payment progress for today’s events.</p>
+        </header>
+        @defer (on viewport) {
+          <router-outlet />
+        } @placeholder {
+          <p class="content-loading">Loading workspace...</p>
+        }
+      </section>
+    </ng-template>
+  </p-splitter>
+</main>

@@ -1,4 +1,5 @@
 {
+  "useMockApi": true,
   "enableSecurity": false,
   "baseUrl": "http://localhost:8080",
   "keycloak": {
