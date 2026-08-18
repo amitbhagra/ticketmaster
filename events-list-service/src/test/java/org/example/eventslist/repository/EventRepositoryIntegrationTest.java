@@ -32,7 +32,7 @@ public class EventRepositoryIntegrationTest {
         List<Event> events = eventGeoDistanceService.findEventsSortedByDistance(28.70410, 77.1025);
 
         assertThat(events).isNotEmpty();
-        assertThat(events.stream().anyMatch(e -> "Concert".equals(e.getEventName()))).isTrue();
+        assertThat(events.stream().anyMatch(e -> "Concert".equals(e.getName()))).isTrue();
     }
 
     @Test
@@ -52,7 +52,7 @@ public class EventRepositoryIntegrationTest {
         List<Event> events = eventRepository.findByLocationNear(searchPoint, distance, pageRequest);
 
         assertThat(events).hasSize(2);
-        assertThat(events.get(0).getEventName()).isEqualTo("Concert");
-        assertThat(events.get(1).getEventName()).isEqualTo("Art Expo");
+        assertThat(events.get(0).getName()).isEqualTo("Concert");
+        assertThat(events.get(1).getName()).isEqualTo("Art Expo");
     }
 }

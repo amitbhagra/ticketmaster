@@ -6,7 +6,7 @@ services:
     image: postgres:latest # To download a specific version, here the version 17.4 of Postgresql
     container_name: postgres
     volumes:
-      - postgresql_data:/var/lib/postgresql/data
+      - postgresql_data:/var/lib/postgresql
       - ./initdb.d:/docker-entrypoint-initdb.d
     env_file:
       - .env    
@@ -17,7 +17,7 @@ services:
     ports:
       - "5432:5432" # HOST_PORT:CONTAINER_PORT
     networks:
-      - kafka-postgres-network
+      - kafka-connect-network
   pgadmin:
     # see https://hub.docker.com/r/dpage/pgadmin4
     image: dpage/pgadmin4:latest # To download the latest image
@@ -36,7 +36,7 @@ services:
     ports:
       - "5433:80" # HOST_PORT:CONTAINER_PORT
     networks:
-      - kafka-postgres-network
+      - kafka-connect-network
 
 volumes:
   postgresql_data:
@@ -48,5 +48,5 @@ volumes:
 
 
 networks:
-  kafka-postgres-network:
+  kafka-connect-network:
     external: true

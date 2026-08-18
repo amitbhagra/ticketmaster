@@ -87,6 +87,11 @@ interface PaymentModeOption {
   name: string;
 }
 
+interface VenueOption {
+  id: number;
+  name: string;
+}
+
 @Component({
   selector: 'app-events-list',
   imports: [
@@ -154,7 +159,7 @@ export class EventsList {
     },
   });
 
-  readonly venueOptionsResource = resource<string[], number>({
+  readonly venueOptionsResource = resource<VenueOption[], number>({
     defaultValue: [],
     params: () => this.venueReload(),
     loader: async () => {
@@ -162,7 +167,7 @@ export class EventsList {
         .set('Content-Type', 'application/json')
         .set('ngrok-skip-browser-warning', 'true');
 
-      return firstValueFrom(this.http.get<string[]>(`${this.apiConfig.getBaseUrl()}/api/v1/events/venues`, { headers }));
+      return firstValueFrom(this.http.get<VenueOption[]>(`${this.apiConfig.getBaseUrl()}/api/v1/events/venues`, { headers }));
     },
   });
 
@@ -183,7 +188,7 @@ export class EventsList {
     }
     return null;
   });
-  readonly venueOptions = computed<string[]>(() => this.venueOptionsResource.value());
+  readonly venueOptions = computed<VenueOption[]>(() => this.venueOptionsResource.value());
   readonly username = computed<string>(() => this.keycloak.getUsername() ?? 'Guest User');
   readonly isAdminUser = computed<boolean>(() => {
     if (!this.keycloak.getSubject()) {

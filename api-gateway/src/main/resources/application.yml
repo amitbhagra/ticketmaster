@@ -4,7 +4,7 @@ spring:
   application:
     name: api-gateway
   security:
-    enabled: false
+    enabled: true
     oauth2:
       resourceserver:
         jwt:
@@ -18,12 +18,12 @@ spring:
               uri: http://localhost:8092
               predicates:
                 - Path=/api/v1/events/**
-              filters:
-                - name: RequestRateLimiter
-                  args:
-                    redis-rate-limiter.replenishRate: 10
-                    redis-rate-limiter.burstCapacity: 20
-                    key-resolver: "#{@userKeyResolver}"
+#              filters:
+#                - name: RequestRateLimiter
+#                  args:
+#                    redis-rate-limiter.replenishRate: 10
+#                    redis-rate-limiter.burstCapacity: 20
+#                    key-resolver: "#{@userKeyResolver}"
             - id: event-list-service
               uri: http://localhost:8097
               predicates:

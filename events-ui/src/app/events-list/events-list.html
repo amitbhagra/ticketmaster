@@ -161,7 +161,13 @@
         [placeholder]="'Select Venue'"
         [style]="{ width: '100%' }"
         name="venue"
-      />
+        optionLabel="name"
+        optionValue="id"
+      >
+        <ng-template let-option pTemplate="item">
+          <span>{{ option.name }}</span>
+        </ng-template>
+      </p-select>
     </div>
     <div class="field-row">
       <label for="new-event-seats">Seats Available</label>
