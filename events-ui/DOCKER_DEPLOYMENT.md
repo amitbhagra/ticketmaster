@@ -56,7 +56,7 @@ docker push your-registry-name.azurecr.io/events-ui:latest
 
 3. **Apply the Kubernetes configuration:**
    ```bash
-   kubectl apply -f k8s-deployment.yaml
+   kubectl apply -f events-ui.yaml
    ```
 
 4. **Verify the deployment:**
@@ -87,8 +87,8 @@ docker push your-registry-name.azurecr.io/events-ui:latest
 If you need different configurations for different environments, you can use ConfigMaps:
 
 ```bash
-# Create a ConfigMap from config.json
-kubectl create configmap events-ui-config --from-file=src/assets/config.json
+# Create a ConfigMap from config.local.json
+kubectl create configmap events-ui-config --from-file=src/assets/config.local.json
 
 # Or create inline
 kubectl create configmap events-ui-config \
@@ -99,8 +99,8 @@ Then mount it in your deployment:
 ```yaml
 volumeMounts:
 - name: config
-  mountPath: /usr/share/nginx/html/assets/config.json
-  subPath: config.json
+  mountPath: /usr/share/nginx/html/assets/config.local.json
+  subPath: config.local.json
 volumes:
 - name: config
   configMap:
