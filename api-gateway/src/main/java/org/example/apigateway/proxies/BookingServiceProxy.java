@@ -1,5 +1,6 @@
 package org.example.apigateway.proxies;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -12,15 +13,17 @@ import static org.springframework.http.HttpStatus.OK;
 public class BookingServiceProxy {
 
   private final WebClient client;
+  private final String bookingServiceBaseUrl;
 
-  public BookingServiceProxy() {
+  public BookingServiceProxy(@Value("${BOOKING_SERVICE_URL:http://localhost:8094}") String bookingServiceBaseUrl) {
     this.client = WebClient.create();
+    this.bookingServiceBaseUrl = bookingServiceBaseUrl;
   }
 
   public Mono<BookingInfo> findBookingById(String bookingId) {
     return client
             .get()
-            .uri("http://localhost:8094/api/v1/bookings/" + bookingId)
+            .uri(bookingServiceBaseUrl + "/api/v1/bookings/" + bookingId)
             .exchangeToMono(resp -> switch (resp.statusCode()) {
               case OK -> resp.bodyToMono(BookingInfo.class);
               case NOT_FOUND -> Mono.error(new BookingNotFoundException());
@@ -31,7 +34,7 @@ public class BookingServiceProxy {
   public Mono<BookingInfo> findBookingById(String bookingId, String authHeader) {
     return client
             .get()
-            .uri("http://localhost:8094/api/v1/bookings/" + bookingId)
+            .uri(bookingServiceBaseUrl + "/api/v1/bookings/" + bookingId)
             .header("Authorization", authHeader)
             .exchangeToMono(resp -> switch (resp.statusCode()) {
               case OK -> resp.bodyToMono(BookingInfo.class);
