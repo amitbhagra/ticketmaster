@@ -3,16 +3,37 @@ server:
 spring:
   application:
     name: api-gateway
-  profiles: prod
+  security:
+    enabled: true
+    oauth2:
+      resourceserver:
+        jwt:
+          # Use one env var across environments; must exactly match token 'iss'
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8082/realms/ticketmaster}
   cloud:
     gateway:
       server:
         webflux:
           routes:
             - id: event-service
-              uri: http://event-service:8080 # Use service discovery or prod URL
+              uri: ${EVENT_SERVICE_URL:http://event-service:8092}
               predicates:
-                - Path=/events/**
-logging:
-  level:
-    root: INFO
+                - Path=/api/v1/events/**
+#              filters:
+#                - name: RequestRateLimiter
+#                  args:
+#                    redis-rate-limiter.replenishRate: 10
+#                    redis-rate-limiter.burstCapacity: 20
+#                    key-resolver: "#{@userKeyResolver}"
+            - id: events-list-service
+              uri: ${EVENTS_LIST_SERVICE_URL:http://events-list-service:8097}
+              predicates:
+                - Path=/api/v1/eventslist/**
+            - id: booking-service
+              uri: ${BOOKING_SERVICE_URL:http://booking-service:8094}
+              predicates:
+                - Path=/api/v1/bookings/**
+            - id: payment-service
+              uri: ${PAYMENT_SERVICE_URL:http://payment-service:8096}
+              predicates:
+                - Path=/api/v1/payments/**

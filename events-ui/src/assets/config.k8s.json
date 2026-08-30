@@ -1,0 +1,10 @@
+{
+  "useMockApi": false,
+  "enableSecurity": true,
+  "baseUrl": "http://app.local",
+  "keycloak": {
+    "url": "http://kubernetes.docker.internal:8082",
+    "realm": "ticketmaster",
+    "clientId": "ui-client"
+  }
+}

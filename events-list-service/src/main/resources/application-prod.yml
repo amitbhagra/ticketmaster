@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: events-list-service
+  elasticsearch:
+    uris: http://${OPENSEARCH_HOST:host.docker.internal}:${OPENSEARCH_PORT:9200}
+opensearch:
+  uris: http://${OPENSEARCH_HOST:host.docker.internal}:${OPENSEARCH_PORT:9200}
+logging:
+  level:
+    root: INFO
+    org.springframework.data.elasticsearch.core: DEBUG
+    org.elasticsearch.client: DEBUG
+server:
+  port: 8097
+kafka:
+  bootstrap:
+    servers: ${KAFKA_BOOTSTRAP_SERVERS:host.docker.internal:9094,host.docker.internal:9095}

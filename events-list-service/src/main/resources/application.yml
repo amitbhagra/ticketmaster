@@ -1,6 +1,10 @@
 spring:
   application:
     name: events-list-service
+  elasticsearch:
+    uris: http://localhost:9200
+opensearch:
+  uris: http://localhost:9200
 logging:
   level:
     root: INFO

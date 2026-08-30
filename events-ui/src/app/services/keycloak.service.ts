@@ -12,7 +12,7 @@ export class KeycloakService {
   constructor(config?: KeycloakConfig) {
     this.keycloak = new Keycloak(
       config ?? {
-        url: 'http://localhost:8082',
+        url: 'http://kubernetes.docker.internal:8082',
         realm: 'ticketmaster',
         clientId: 'ui-client',
       }

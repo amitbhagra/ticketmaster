@@ -4,14 +4,14 @@ FROM node:20-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package files (path is relative to build context root)
+COPY events-ui/package*.json ./
 
 # Install dependencies
 RUN npm ci --legacy-peer-deps
 
-# Copy project files
-COPY . .
+# Copy project files (path is relative to build context root)
+COPY events-ui/ .
 
 # Build the application for production
 RUN npm run build
@@ -19,15 +19,13 @@ RUN npm run build
 # Stage 2: Serve the application with nginx
 FROM nginx:alpine
 
-# Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy custom nginx configuration (path is relative to build context root)
+COPY events-ui/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy built application from builder stage
 # Angular 20 with @angular/build outputs to dist/event-booking-ui/browser
 COPY --from=builder /app/dist/event-booking-ui/browser /usr/share/nginx/html
 
-# Copy assets config (if needed at runtime)
-COPY --from=builder /app/src/assets/config.json /usr/share/nginx/html/assets/config.json
 
 # Expose port 80
 EXPOSE 80
