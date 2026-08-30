@@ -24,7 +24,9 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8082/realms/ticketmaster
+          # Use one env var across environments; must exactly match token 'iss'
+          #issuer-uri: http://localhost:8082/realms/ticketmaster
+          issuer-uri: http://kubernetes.docker.internal:8082/realms/ticketmaster
 server:
   port: 8092
 
