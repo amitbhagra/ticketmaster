@@ -6,7 +6,7 @@ services:
     ports:
       - 8090:8080
     networks:
-      - kafka-postgres-network
+      - kafka-connect-network
     depends_on:
       - kafka0
       - kafka1
@@ -32,13 +32,15 @@ services:
     container_name: kafka0
     ports:
       - "9092:9092"
+      - "9094:9094"        # add this
       - "9997:9997"
     networks:
-      - kafka-postgres-network
+      - kafka-connect-network
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka0:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,KUBERNETES:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka0:29092,PLAINTEXT_HOST://localhost:9092,KUBERNETES://host.docker.internal:9094'
+      KAFKA_LISTENERS: 'PLAINTEXT://kafka0:29092,CONTROLLER://kafka0:29093,PLAINTEXT_HOST://0.0.0.0:9092,KUBERNETES://0.0.0.0:9094'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
@@ -48,7 +50,6 @@ services:
       KAFKA_PROCESS_ROLES: 'broker,controller'
       KAFKA_NODE_ID: 1
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka0:29093,2@kafka1:29093'
-      KAFKA_LISTENERS: 'PLAINTEXT://kafka0:29092,CONTROLLER://kafka0:29093,PLAINTEXT_HOST://0.0.0.0:9092'
       KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_LOG_DIRS: '/var/lib/kafka/data'
@@ -63,13 +64,15 @@ services:
     container_name: kafka1
     ports:
       - "9093:9092"
+      - "9095:9095"        # add this
       - "9998:9997"
     networks:
-      - kafka-postgres-network
+      - kafka-connect-network
     environment:
       KAFKA_BROKER_ID: 2
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka1:29092,PLAINTEXT_HOST://localhost:9093'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,KUBERNETES:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka1:29092,PLAINTEXT_HOST://localhost:9093,KUBERNETES://host.docker.internal:9095'
+      KAFKA_LISTENERS: 'PLAINTEXT://kafka1:29092,CONTROLLER://kafka1:29093,PLAINTEXT_HOST://0.0.0.0:9092,KUBERNETES://0.0.0.0:9095'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
@@ -79,7 +82,6 @@ services:
       KAFKA_PROCESS_ROLES: 'broker,controller'
       KAFKA_NODE_ID: 2
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka0:29093,2@kafka1:29093'
-      KAFKA_LISTENERS: 'PLAINTEXT://kafka1:29092,CONTROLLER://kafka1:29093,PLAINTEXT_HOST://0.0.0.0:9092'
       KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_LOG_DIRS: '/var/lib/kafka/data'
@@ -93,7 +95,7 @@ services:
     ports:
       - 8095:8085
     networks:
-      - kafka-postgres-network
+      - kafka-connect-network
     depends_on:
       - kafka0
       - kafka1
@@ -111,8 +113,10 @@ services:
     image: confluentinc/cp-kafka-connect:7.2.1
     ports:
       - 8093:8083
+      - 9101:9101
+      - 18080:8080
     networks:
-      - kafka-postgres-network
+      - kafka-connect-network
     depends_on:
       - kafka0
       - kafka1
@@ -136,9 +140,11 @@ services:
       CONNECT_PLUGIN_PATH: "/usr/share/java,/etc/kafka-connect/jars"
     volumes:
       - ./connectors:/etc/kafka-connect/jars
+      - ./jmx/jmx_prometheus_javaagent-0.16.0.jar:/opt/jmx_prometheus_javaagent.jar
+      - ./jmx/kafka-connect.yml:/opt/kafka-connect.yml
 volumes:
   kafka_0_data: {}
   kafka_1_data: {}
 networks:
-  kafka-postgres-network:
+  kafka-connect-network:
     external: true

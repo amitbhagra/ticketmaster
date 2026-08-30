@@ -15,6 +15,13 @@ services:
       - KC_DB_URL_DATABASE=keycloak
       - KC_DB_USERNAME=keycloak
       - KC_DB_PASSWORD=password
+      # Force a stable issuer URL (not request-host derived)
+      - KC_HTTP_ENABLED=true
+      - KC_PROXY_HEADERS=xforwarded
+      - KC_HOSTNAME=http://kubernetes.docker.internal:8082
+      - KC_HOSTNAME_ADMIN=http://kubernetes.docker.internal:8082
+      - KC_HOSTNAME_STRICT=true
+      - KC_HOSTNAME_STRICT_HTTPS=false
     ports:
       - "8082:8080"
     depends_on:

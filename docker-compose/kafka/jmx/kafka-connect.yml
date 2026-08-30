@@ -1,0 +1,40 @@
+lowercaseOutputName: true
+rules:
+  - pattern: "kafka.connect<type=connector-task-metrics, connector=(.+), task=(.+)><>(.+): (.+)"
+    name: kafka_connect_task_$3
+    labels:
+      connector: "$1"
+      task: "$2"
+  - pattern: "kafka.connect<type=source-task-metrics, connector=(.+), task=(.+)><>(source-record-poll-total)"
+    name: kafka_connect_source_task_$3
+    labels:
+      connector: "$1"
+      task: "$2"
+    type: COUNTER
+  - pattern: "kafka.connect<type=source-task-metrics, connector=(.+), task=(.+)><>(source-record-write-total)"
+    name: kafka_connect_source_task_$3
+    labels:
+      connector: "$1"
+      task: "$2"
+    type: COUNTER
+  - pattern: "kafka.connect<type=source-task-metrics, connector=(.+), task=(.+)><>(source-record-write-rate)"
+    name: kafka_connect_source_task_$3
+    labels:
+      connector: "$1"
+      task: "$2"
+    type: GAUGE
+  - pattern: "kafka.connect<type=sink-task-metrics, connector=(.+), task=(.+)><>(sink-record-send-total)"
+    name: kafka_connect_sink_task_$3
+    labels:
+      connector: "$1"
+      task: "$2"
+    type: COUNTER
+  - pattern: "kafka.connect<type=sink-task-metrics, connector=(.+), task=(.+)><>(sink-record-send-rate)"
+    name: kafka_connect_sink_task_$3
+    labels:
+      connector: "$1"
+      task: "$2"
+    type: GAUGE
+  - pattern: "kafka.connect<type=connect-worker-metrics><>failed-task-count"
+    name: kafka_connect_worker_failed_task_count
+    type: GAUGE
