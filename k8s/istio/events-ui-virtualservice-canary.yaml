@@ -1,0 +1,26 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: events-ui
+  namespace: default
+spec:
+  hosts:
+    - events-ui.example.com
+  gateways:
+    - istio-system/istio-gateway
+  http:
+    - name: canary-split
+      route:
+        - destination:
+            host: events-ui
+            subset: stable
+            port:
+              number: 80
+          weight: 90
+        - destination:
+            host: events-ui
+            subset: canary
+            port:
+              number: 80
+          weight: 10
+

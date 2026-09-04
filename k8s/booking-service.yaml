@@ -5,7 +5,7 @@ metadata:
   labels:
     app: booking-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: booking-service
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: booking-service
-          image: booking-service:local
+          image: booking-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8094
