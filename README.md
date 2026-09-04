@@ -110,6 +110,83 @@ npm run start
 
 ---
 
+## Kubernetes Deployment
+
+### API Gateway
+
+```bash
+docker build -t api-gateway:latest -f api-gateway/Dockerfile .
+kind load docker-image api-gateway:latest --name desktop
+kubectl apply -f k8s/api-gateway.yaml -n ticketmaster
+kubectl delete -f k8s/api-gateway.yaml -n ticketmaster
+kubectl -n ticketmaster rollout restart deployment/api-gateway
+```
+
+---
+
+### Events List Service
+
+```bash
+docker build -t events-list-service:latest -f events-list-service/Dockerfile .
+kind load docker-image events-list-service:latest --name desktop
+kubectl apply -f k8s/events-list-service.yaml -n ticketmaster
+kubectl delete -f k8s/events-list-service.yaml -n ticketmaster
+kubectl -n ticketmaster rollout restart deployment/events-list-service
+```
+
+---
+
+### Events Service
+
+```bash
+docker build -t event-service:latest -f event-service/Dockerfile .
+kind load docker-image event-service:latest --name desktop
+kubectl apply -f k8s/event-service.yaml -n ticketmaster
+kubectl delete -f k8s/event-service.yaml -n ticketmaster
+kubectl -n ticketmaster rollout restart deployment/event-service
+```
+
+---
+
+### Booking Service
+
+```bash
+docker build -t booking-service:latest -f booking-service/Dockerfile .
+kind load docker-image booking-service:latest --name desktop
+kubectl apply -f k8s/booking-service.yaml -n ticketmaster
+kubectl delete -f k8s/booking-service.yaml -n ticketmaster
+kubectl -n ticketmaster rollout restart deployment/booking-service
+```
+
+---
+
+### Payment Service
+
+```bash
+docker build -t payment-service:latest -f payment-service/Dockerfile .
+kind load docker-image payment-service:latest --name desktop
+kubectl apply -f k8s/payment-service.yaml -n ticketmaster
+kubectl delete -f k8s/payment-service.yaml -n ticketmaster
+kubectl -n ticketmaster rollout restart deployment/payment-service
+```
+
+---
+
+### Events UI
+
+```bash
+docker build -t events-ui:latest -f events-ui/Dockerfile .
+kind load docker-image events-ui:latest --name desktop
+kubectl apply -f k8s/events-ui.yaml -n ticketmaster
+kubectl delete -f k8s/events-ui.yaml -n ticketmaster
+```
+
+
+
+
+
+---
+
 ## API Documentation
 
 - **Postman Collections:**  

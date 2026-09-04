@@ -2,6 +2,8 @@ package org.example.apigateway.proxies;
 
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.reactive.function.client.WebClient;
@@ -11,27 +13,45 @@ import reactor.core.publisher.Mono;
 public class EventServiceProxy {
 
   private final WebClient client;
-  private final String eventServiceBaseUrl;
 
-  public EventServiceProxy(@Value("${EVENT_SERVICE_URL:http://localhost:8092}") String eventServiceBaseUrl) {
-    this.client = WebClient.create();
-    this.eventServiceBaseUrl = eventServiceBaseUrl;
+  public EventServiceProxy(
+          WebClient.Builder webClientBuilder,
+          @Value("${EVENT_SERVICE_URL:http://localhost:8092}") String eventServiceBaseUrl) {
+    this.client = webClientBuilder
+            .baseUrl(eventServiceBaseUrl)
+            .build();
   }
 
   public Mono<EventInfo> findEventById(String eventId) {
-    String url = eventServiceBaseUrl + "/api/v1/events/" + eventId;
     return client.get()
-            .uri(url)
-            .retrieve()
-            .bodyToMono(EventInfo.class);
+            .uri("/api/v1/events/{eventId}", eventId)
+            .exchangeToMono(resp -> {
+              HttpStatusCode statusCode = resp.statusCode();
+
+              if (statusCode.equals(HttpStatus.OK)) {
+                return resp.bodyToMono(EventInfo.class);
+              } else if (statusCode.equals(HttpStatus.NOT_FOUND)) {
+                return Mono.error(new EventNotFoundException());
+              } else {
+                return Mono.error(new RuntimeException("Unknown status code: " + statusCode));
+              }
+            });
   }
 
   public Mono<EventInfo> findEventById(String eventId, String authHeader) {
-    String url = eventServiceBaseUrl + "/api/v1/events/" + eventId;
     return client.get()
-            .uri(url)
+            .uri("/api/v1/events/{eventId}", eventId)
             .header("Authorization", authHeader)
-            .retrieve()
-            .bodyToMono(EventInfo.class);
+            .exchangeToMono(resp -> {
+              HttpStatusCode statusCode = resp.statusCode();
+
+              if (statusCode.equals(HttpStatus.OK)) {
+                return resp.bodyToMono(EventInfo.class);
+              } else if (statusCode.equals(HttpStatus.NOT_FOUND)) {
+                return Mono.error(new EventNotFoundException());
+              } else {
+                return Mono.error(new RuntimeException("Unknown status code: " + statusCode));
+              }
+            });
   }
 }

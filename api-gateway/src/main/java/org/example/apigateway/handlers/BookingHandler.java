@@ -20,35 +20,43 @@ import reactor.util.function.Tuple3;
 @RequiredArgsConstructor
 public class BookingHandler {
 
-  private final BookingServiceProxy bookingService;
-  private final EventServiceProxy eventService;
-  private final PaymentServiceProxy paymentService;
+    private final BookingServiceProxy bookingService;
+    private final EventServiceProxy eventService;
+    private final PaymentServiceProxy paymentService;
 
 
-  public Mono<ServerResponse> getBookingDetails(ServerRequest serverRequest) {
-    String bookingId = serverRequest.pathVariable("bookingId");
-    String authHeader = serverRequest.headers().firstHeader("Authorization");
+    public Mono<ServerResponse> getBookingDetails(ServerRequest serverRequest) {
+        String bookingId = serverRequest.pathVariable("bookingId");
+        String authHeader = serverRequest.headers().firstHeader("Authorization");
 
-    return bookingService.findBookingById(bookingId, authHeader)
-            .flatMap(bookingInfo -> {
-              Mono<Optional<PaymentInfo>> paymentInfoMono = paymentService
-                      .findPaymentByBookingId(bookingId, authHeader)
-                      .map(Optional::of)
-                      .onErrorReturn(Optional.empty());
+        return bookingService.findBookingById(bookingId, authHeader)
+                .flatMap(bookingInfo ->
+                        // Fix 1: Read and carry forward the active tracing context explicitly
+                        Mono.deferContextual(contextView -> {
 
-              Mono<Optional<EventInfo>> eventInfoMono = eventService
-                      .findEventById(String.valueOf(bookingInfo.getEventId()), authHeader)
-                      .map(Optional::of)
-                      .onErrorReturn(Optional.empty());
+                            Mono<Optional<PaymentInfo>> paymentInfoMono = paymentService
+                                    .findPaymentByBookingId(bookingId, authHeader)
+                                    .map(Optional::of)
+                                    .onErrorReturn(Optional.empty())
+                                    // Fix 2: Bind the captured tracking context to this specific async stream
+                                    .contextWrite(contextView);
 
-              return Mono.zip(Mono.just(bookingInfo), paymentInfoMono, eventInfoMono)
-                      .map(BookingDetails::makeBookingDetails)
-                      .flatMap(details -> ServerResponse.ok()
-                              .contentType(MediaType.APPLICATION_JSON)
-                              .body(fromObject(details)));
-            })
-            .onErrorResume(BookingNotFoundException.class, e -> ServerResponse.notFound().build());
-  }
+                            Mono<Optional<EventInfo>> eventInfoMono = eventService
+                                    .findEventById(String.valueOf(bookingInfo.getEventId()), authHeader)
+                                    .map(Optional::of)
+                                    .onErrorReturn(Optional.empty())
+                                    // Fix 2: Bind the captured tracking context to this specific async stream
+                                    .contextWrite(contextView);
+
+                            return Mono.zip(Mono.just(bookingInfo), paymentInfoMono, eventInfoMono)
+                                    .map(BookingDetails::makeBookingDetails)
+                                    .flatMap(details -> ServerResponse.ok()
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .body(fromObject(details)));
+                        })
+                )
+                .onErrorResume(BookingNotFoundException.class, e -> ServerResponse.notFound().build());
+    }
 
 
 }

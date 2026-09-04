@@ -5,7 +5,7 @@ metadata:
   labels:
     app: payment-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: payment-service
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: payment-service
-          image: payment-service:local
+          image: payment-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8096

@@ -5,7 +5,7 @@ metadata:
   labels:
     app: api-gateway
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: api-gateway
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: api-gateway:local
+          image: api-gateway:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

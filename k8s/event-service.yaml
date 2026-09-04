@@ -5,7 +5,7 @@ metadata:
   labels:
     app: event-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: event-service
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: event-service
-          image: event-service:local
+          image: event-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8092
